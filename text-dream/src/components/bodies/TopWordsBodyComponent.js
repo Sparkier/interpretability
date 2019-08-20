@@ -154,7 +154,8 @@ class TopWordsBody extends React.Component {
 
     mainGroup.select('.yAxis')
         .call(graphParams.yAxis)
-        .selectAll('text');
+        .selectAll('text')
+        .style('font-size', '0.875rem');
   }
 
   /**

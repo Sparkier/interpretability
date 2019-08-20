@@ -32,8 +32,7 @@ class AppRouter extends React.Component {
       <div className='content'>
         <Router>
           <div className='full'>
-            <Route exact={true} path="/"
-              render={() => <Main />}
+            <Route exact={true} path="/" render={() => <Main />}
             />
           </div>
         </Router>
