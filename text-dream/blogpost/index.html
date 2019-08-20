@@ -126,6 +126,67 @@ The first question we wanted to answer for these dreaming processes is how the i
 Here, it is interesting to look at when and how the model replaces certain words in the input.
 At the same time, we want to see how the activation value of the neuron we are trying to maximize is evolving alongside the change of temperature which we use to force the model to pick real tokens.
 Additionally, we compare the evolvement of this activation value to the activation we would get if we were to ignore the linear combination of tokens that we obtain using the softmax-trick, and insted snap our input to the top ranked tokens of the softmax function.
+The visualization of this process can be seen in Figure 1.
+
+<div class="image-div">
+  <img src="sentence_dream.png" style="width:1100px;">
+  <div class="caption" style="width:1100px">Figure 1. Visualization of the dreaming result over iterations. We skipped some iterations in the middle for simplicity. In the beginning, the model can use linear combinations of embeddings to get a high activation value (dark green). As the temperature (blue) loweres, the model has to stick more to real tokens and the activation and activation of actual token ids (light green) gets closer. In this run, the model succeeds in dreaming to a higher activation (0.0436 vs. 0.0570).</div>
+</div>
+
+<p>
+As you see, this is not a valid english sentence anymore.
+What was more concerning, however, is that while this is an example for a successful run, we were not able to consistently get back to the same or a higher activation than what we started with.
+We always started with top 10 sentences from corpus search as a baseline, as this approach has a lot more freedom to change words and thus should be able to get to higher activations.
+This is something we wanted to investigate further.
+
+<p>
+To look at these processes and what might go wrong here, we made the problem easier by having it only change one word in the input sentence.
+We did this to check if it would still not always be able to reach high activation values, and while the probability of getting to a high activation value increased, it still did not work out all the time.
+We had some ideas about that, which we wanted to investigate further:
+
+<ol>
+  <li>
+  Temperature annealing seems to first, allow the model to pick any linear combination of tokens, before gradually reducing the number of tokens used for this linear combination.
+  What if some tokens get removed from the combination but would highly activate the neuron in isolation?
+  </li>
+  <li>
+  What if the model is so specialized, that its neuron is really interested in the token walk, but everything arounf that token is not activate the neuron very much? This would make the optimization problem with gradient decent very hard.
+  </li>
+</ol>
+
+<h3>Visualizing the annealing process</h3>
+
+To investigate our first idea for why BERT might have problems with getting good sleep, we want to see how the annealing progresses.
+What is especially interesting in this case, is how the softmax distribution over the token space changes throughout the process.
+We thus developed a visualization that helps us investigate this distribution for different iterations.
+In Figure 2, you can see how this looks like.
+
+<div class="image-div">
+  <img src="top_words.png" style="width:700px;">
+  <div class="caption" style="width:700px">
+    Figure 2. Visualization of the softmax diftribution that is used for getting a linear combination of embeddings to feed into the model.
+    We see that the model uses a linear combination of tokens at this step.
+    Interestingly, the token "hands" has a very low value.
+    If we went on, we could see that the model rules out more tokens and in the end is unable to swap back to hands to get a higher activation.
+  </div>
+</div>
+
+<p>
+It is also interesting to look at this in combination with the top activations for a specific word position.
+We can do that by simply checking the activation for each word in the vovabulary, and visualizing that as well.
+You can see that in Figure 3.
+
+(Add figure)
+
+Interestingly, .....
+
+<h3>Visualizing similar embeddings</h3>
+
+Another concern for why this method is not always leading to desired results is, that the optimization problem is hard.
+A reason for this could be, that the models neuron are highly specialized on certrain tokens, while all the tokens around it might not activate the neuron much.
+To get an idea about that, we developed another visualization that allows us to look at activations for tokens that are close to the token we know higly activates the neuron.
+
+
 
 <h2>Conclusion</h2>
 
